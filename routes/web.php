@@ -39,3 +39,77 @@ Route::get('/users/{id_user}/posts', function($id_user){
 Route::get('/produtos/{idProduct?}', function($idProduct = ''){
     return "Produtos {$idProduct}";
 });
+
+//With this type of route, I can use the redirect() helper and when I access, send it to wherever I want
+Route::get('redirect', function(){
+    return redirect('/contato');
+});
+
+//With this type of route, I can use the redirect() helper and when I access, send it to wherever I want
+Route::redirect('/redirect2', '/about');
+
+//This type of route I directly access the view I want (could be used on static pages)
+Route::view('/testeabout', 'welcome');
+
+//Here I define the name of the route, so when I need to access it, I call it by name and if in the future I need to change the url, I don't need to refactor the code, as the system will automatically identify it by name (imagine as if ->name was the creation of a variable and the path was its value)
+Route::get('/name-url', function(){
+    return 'name route';
+})->name('url.name');
+
+Route::get('/login', function(){
+    return 'login';
+})->name('login');
+
+//Here I'm creating a route group that is using a middleware, where it defines that to access this page you need to be logged in and the 2nd group is informing that it will be inside "/admin" for example
+/*Route::middleware(['auth'])->group(function(){
+
+    Route::prefix('admin')->group(function(){
+
+        //In this case I'm defining that the controller I want is inside a folder in the Controller, but with the group I don't need to define the path in each controller, so it's done automatically in all
+        Route::namespace('App\Http\Controllers\Admin')->group(function(){
+
+            //in this case I'm defining a part of the name of each controller, since the start will be the same in all, so I create the name group to define this start
+            Route::name('admin.')->group(function(){
+                Route::get('/teste', 'TesteController@teste')->name('teste');
+
+                Route::get('/products', 'TesteController@products')->name('products');
+            });
+
+            //Route::get('/teste', 'TesteController@teste')->name('admin.teste');
+
+            //Route::get('/products', 'TesteController@products')->name('admin.products');
+        });
+
+        Route::get('/dashboard', function(){
+            return 'dashboard';
+        });
+
+        Route::get('/financeiro', function(){
+            return 'Financeiro';
+        });
+
+        Route::get('/settings', function(){
+            return 'settings';
+        });
+
+    });
+}); */
+
+//This format is the same thing I did above, but in a simpler and easier way
+Route::group([
+    'middleware' => ['auth'],
+    'prefix' => 'Admin',
+    'namespace' => 'App\Http\Controllers\Admin'
+], function(){
+
+    Route::get('/teste', 'TesteController@teste')->name('teste');
+
+    Route::get('/products', 'TesteController@products')->name('products');
+
+});
+
+/*
+* in the terminal there are 2 commands about the routes
+* 1st - php artisan route:list (this command is to list all your routes and your requests)
+* 2nd - php artisan route:cache (serves to clear the routes cache)
+*/
