@@ -2,6 +2,24 @@
 
 use Illuminate\Support\Facades\Route;
 
+//As rotas abaixo foram criadas no módulo dos controllers
+
+//O resource esta fazendo a mesma coisa que as rotas abaixo de products, porém em uma estrutura menor
+Route::resource('products', 'App\Http\Controllers\ProductController');
+
+/*
+Route::get('products/edit/{id}', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
+Route::get('products/create', 'App\Http\Controllers\ProductController@create')->name('products.create');
+Route::get('products/{id}', 'App\Http\Controllers\ProductController@show')->name('products.show');
+Route::get('/products', 'App\Http\Controllers\ProductController@index')->name('list.products');
+Route::get('/admin/teste', 'App\Http\Controllers\Admin\TesteController@teste')->name('admin.teste');
+Route::post('products', 'App\Http\Controllers\ProductController@store')->name('products.store');
+Route::put('products/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update');
+Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy')->name('products.destroy');
+*/
+
+//As rotas abaixo foram criadas no módulo de rotas
+
 Route::get('/', function () {
     return view('welcome');
 });
