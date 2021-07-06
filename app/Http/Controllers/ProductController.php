@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreUpdateProductRequest;
 
 class ProductController extends Controller
 {
@@ -22,8 +23,11 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = ['Celular', 'Câmera', 'Computador'];
-        return $products;
+        $teste = 123456;
+        $teste2 = [1,2,3,4,5];
+        $products = ['Celular', 'Computador', 'Tv', 'Câmera'];
+
+        return view('admin.pages.products.index', compact('teste', 'teste2', 'products'));
     }
 
     public function show($id) {
@@ -31,19 +35,47 @@ class ProductController extends Controller
     }
 
     public function create() {
-        return 'Vamos criar um novo produto';
+        return view('admin.pages.products.create');
     }
 
     public function edit($id) {
-        return "Vamos editar o produto: {$id}";
+        return view('admin.pages.products.edit', compact('id'));
     }
 
-    public function store() {
-        return "Cadastrando um novo produto";
+    public function store(StoreUpdateProductRequest $request) {
+
+        dd('ok');
+
+        //pego todas requisições
+        //dd($request->all());
+
+        //pego requisições especificas
+        //dd($request->only(['name', 'description']));
+
+        //neste caso estou pegando o valor direto do input
+        //dd($request->name);
+
+        //neste caso estou verificando se existe este valor
+        //dd($request->has('name'));
+
+        //neste caso eu defino um valor default para o input
+        //dd($request->input('name', 'test2'));
+
+        //neste caso eu estou pegando todos os campos exceto o que eu informei
+        //dd($request->except('_token'));
+
+        //aqui pego os dados do envio de arquivo
+//        dd($request->file('photo')->isValid());
+
+        /*
+        Aqui estou fazendo o upload de arquivos
+        if($request->file('photo')->isValid() == true) {
+            $request->photo->store('products');
+        }*/
     }
 
     public function update($id) {
-        return "Editando o produto: {$id}";
+        dd($_POST);
     }
 
     public function destroy($id) {
