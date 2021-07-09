@@ -6,90 +6,76 @@
 
 @include('admin.alerts.alerts')
 
-<h1>View da index</h1>
-<bR>
-<h2>Exibindo produtos</h2>
+<h1 class="text-center">View da index</h1>
+<bR><br>
 
-<a href="{{ route( 'products.create' ) }}">
-Cadastrar novo produto
-</a>
+<div class="row text-center">
+    <div class="col-md-6">
+        <h2>Exibindo produtos</h2>
+    </div>
 
-@if(isset($products))
+    <div class="col-md-6">
+        <a href="{{ route( 'products.create' ) }}" class="btn btn-info">
+        Cadastrar novo produto
+        </a>
+    </div>
+</div>
 
-    @foreach($products as $product)
-
-        <p class="@if($loop->last) last @endif">Produto: {{ $product }}</p>
-        <hr>
-    @endforeach
-
-@endif
-
-<br><bR><hr><br>
-
-<h2>Exibindo produtos com forelse</h2>
-@forelse($products as $product)
-    <p class="@if($loop->last) last @endif">Produto: {{ $product }}</p>
-    <hr>
-@empty
-    <p>Não existe produtos cadastrados</p>
-@endforelse
-
-<br><bR><hr><br>
-
-@if($teste === 1234)
-    Caiu no if
-@elseif ($teste === '1234')
-    Caiu no elseif
-@else
-    Caiu no else
-@endif
 <br><hr><br>
-@unless($teste === '1234')
-    Entrou no unless, que funciona como oposto do if (só entra se não atender o que é passado)
-@endunless
-<br><hr><br>
-@isset($teste)
-    Entrou, pq neste caso estou verificando se a variável existe
-@endisset
-<br><hr><br>
-@empty($teste)
-    Aqui eu verifico se a variável está vazio
-@else
-    Não está vazio
-@endempty
-<br><hr><br>
-@auth
-    Aqui eu verifico se a pessoa está autenticada
-@else
-    Não está autenticado
-@endauth
-<br><hr><br>
-@guest
-    Este caso eu verifico se a pessoa <strong>NÃO ESTÁ AUTENTICADA</strong>
-@endguest
-<br><hr><br>
-@switch($teste)
-    @case(1)
-        Igual a 1
-        @break
 
-    @case(2)
-        Igual a 2
-        @break
+    <form action="{{ route('products.search') }}" method="post">
+        @csrf
+        <input type="text" name="filter" placeholder="Filtrar:" class="form-control" value=" {{ $filters->filter ?? '' }}">
+        <button type="submit" class="btn btn-success">Pesquisar</button>
+    </form>
 
-    @case(123456)
-        Igual a 123456
-        @break
+<br><hr><br>
 
-    @default
-        Default
-@endswitch
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($products as $product)
+                <tr>
+                    <td>{{ $product->id }}</td>
+                    <td>
+                        @if ($product->image)
+                            <img src="{{ url("storage/{$product->image}") }}" alt="{{ $product->name }}" width="100">
+                        @endif
+
+                    </td>
+                    <td>{{ $product->name }}</td>
+                    <td>{{ $product->price}}</td>
+                    <td>
+                        <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary">
+                            Detalhes
+                        </a>
+                        <a href="{{ route('products.edit', $product->id)}}" class="btn btn-warning">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br><br>
+
+    @if (isset($filters))
+        <div class="text-center">
+            {!! $products->appends($filters)->links() !!}
+        </div>
+    @else
+        <div class="text-center">
+            {!! $products->links() !!}
+        </div>
+    @endif
 
 @endsection
-
-<style>
-    .last {
-        background-color:blue;
-        color: #fff;
-    }
-</style>

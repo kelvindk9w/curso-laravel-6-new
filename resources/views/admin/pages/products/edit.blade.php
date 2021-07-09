@@ -4,16 +4,20 @@
 
 @section('content')
 
-    <h1>Editar produto - {{ $id }}</h1>
+    <div class="row text-center">
+        <div class="col-md-6">
+            <h1>Editar produto - {{ $product->id }}</h1>
+        </div>
+        <div class="col-md-6">
+            <a href="{{ route('products.index')}}" class="btn btn-danger">Voltar</a>
+        </div>
+    </div>
 
-    <form action="{{ route('products.update', $id) }}" method="post">
+    <br><br><br>
+
+    <form action="{{ route('products.update', $product->id) }}" method="post" enctype="multipart/form-data">
         @method('PUT')
-        <!--<input type="hidden" name="_method" value="PUT">-->
-        @csrf
-        <!--<input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
-        <input type="text" name="name" placeholder="Nome">
-        <input type="text" name="description" placeholder="Descrição">
-        <button type="submit">Enviar</button>
+        @include('admin.pages.products._partials.form')
     </form>
 
 @endsection

@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUpdateProductRequest;
+use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
 
     protected $request;
+    private $repository;
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request, Product $product) {
+        $this->request = $request;
+        $this->repository = $product;
         //Neste caso estou falando que para aplicar este middleware em todas as classes
         //$this->middleware('auth');
 
@@ -23,15 +28,26 @@ class ProductController extends Controller
 
     public function index()
     {
-        $teste = 123456;
-        $teste2 = [1,2,3,4,5];
-        $products = ['Celular', 'Computador', 'Tv', 'Câmera'];
 
-        return view('admin.pages.products.index', compact('teste', 'teste2', 'products'));
+        $products = Product::paginate(20);
+
+        return view('admin.pages.products.index', [
+            'products' => $products,
+        ]);
     }
 
     public function show($id) {
-        return "Estamos vendo os detalhes do produto: {$id}";
+
+        //$product = Product::where('id', $id)->first();
+        //$product = Product::find($id);
+
+        if(!$product = $this->repository->where('id', $id)->first()) {
+            return redirect()->back();
+        }
+
+        return view('admin.pages.products.show', [
+            'product' => $product
+        ]);
     }
 
     public function create() {
@@ -39,12 +55,33 @@ class ProductController extends Controller
     }
 
     public function edit($id) {
-        return view('admin.pages.products.edit', compact('id'));
+
+        if(!$product = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        return view('admin.pages.products.edit', compact('product'));
     }
 
     public function store(StoreUpdateProductRequest $request) {
 
-        dd('ok');
+        $data = $request->only('name', 'description', 'price');
+
+        if($request->hasFile('image') && $request->image->isValid()) {
+            $imagePath = $request->image->store('products');
+
+            $data['image'] = $imagePath;
+        }
+
+        $this->repository->create($data);
+
+        return redirect()->route('products.index');
+
+
+        //$product = new Product;
+        //$product->name = $request->name;
+        //$product->save();
+
+
 
         //pego todas requisições
         //dd($request->all());
@@ -74,11 +111,54 @@ class ProductController extends Controller
         }*/
     }
 
-    public function update($id) {
-        dd($_POST);
+    public function update(StoreUpdateProductRequest $request, $id) {
+        if(!$product = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        $data = $request->all();
+
+        if($request->hasFile('image') && $request->image->isValid()) {
+
+            if($product->image && Storage::exists($product->image)) {
+                Storage::delete($product->image);
+            }
+
+            $imagePath = $request->image->store('products');
+
+            $data['image'] = $imagePath;
+        }
+
+        $product->update($data);
+
+        return redirect()->route('products.index');
     }
 
     public function destroy($id) {
-        return "Deletando o produto: {$id}";
+
+        $product = $this->repository->where('id', $id)->first();
+
+        if(!$product)
+            return redirect()->back();
+
+        if($product->image && Storage::exists($product->image)) {
+            Storage::delete($product->image);
+        }
+
+        $product->delete();
+
+        return redirect()->route('products.index');
+
+    }
+
+    public function search(Request $request) {
+
+        $filters = $request->all();
+
+        $products = $this->repository->search($request->filter);
+
+        return view('admin.pages.products.index', [
+            'products' => $products,
+            'filters' => $filters
+        ]);
     }
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 //As rotas abaixo foram criadas no módulo dos controllers
 
+Route::any('/products/search', 'App\Http\Controllers\ProductController@search')->name('products.search');
 //O resource esta fazendo a mesma coisa que as rotas abaixo de products, porém em uma estrutura menor
 Route::resource('products', 'App\Http\Controllers\ProductController');
 

@@ -4,23 +4,17 @@
 
 @section('content')
 
-    <h1>Cadastrar novo produto</h1>
-
-    @if($errors->any())
-        @foreach($errors->all() AS $error)
-            <ul>
-                <li>{{ $error }}</li>
-            </ul>
-        @endforeach
-    @endif
+    <div class="row text-center">
+        <div class="col-md-6">
+            <h1>Cadastrar novo produto</h1>
+        </div>
+        <div class="col-md-6">
+            <a href="{{ route('products.index')}}" class="btn btn-danger">Voltar</a>
+        </div>
+    </div>
 
     <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
-        @csrf
-        <!--<input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
-        <input type="file" name="photo">
-        <input type="text" name="name" placeholder="Nome" value="{{ old('name') }}">
-        <input type="text" name="description" placeholder="Descrição"  value="{{ old('description') }}">
-        <button type="submit">Enviar</button>
+        @include('admin.pages.products._partials.form')
     </form>
 
 @endsection
