@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::any('/products/search', 'App\Http\Controllers\ProductController@search')->name('products.search');
 //O resource esta fazendo a mesma coisa que as rotas abaixo de products, porém em uma estrutura menor
-Route::resource('products', 'App\Http\Controllers\ProductController');
+Route::resource('products', 'App\Http\Controllers\ProductController')->middleware('auth');
 
 /*
 Route::get('products/edit/{id}', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
@@ -132,3 +132,5 @@ Route::group([
 * 1st - php artisan route:list (this command is to list all your routes and your requests)
 * 2nd - php artisan route:cache (serves to clear the routes cache)
 */
+
+Auth::routes();

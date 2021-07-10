@@ -141,8 +141,8 @@ class ProductController extends Controller
             return redirect()->back();
 
         if($product->image && Storage::exists($product->image)) {
-            Storage::delete($product->image);
-        }
+                Storage::delete($product->image);
+            }
 
         $product->delete();
 
